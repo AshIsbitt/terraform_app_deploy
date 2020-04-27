@@ -9,3 +9,7 @@ variable "name" {
 variable "ami_id" {
   default = "ami-005412cbe6cb77ca6"
 }
+
+variable "gateway_id_var" {
+  default = "data.ami_internet_gateway.default-igw-dpl.id"
+}
