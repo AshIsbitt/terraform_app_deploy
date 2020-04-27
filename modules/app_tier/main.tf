@@ -3,7 +3,7 @@
 #Create Subnet
 resource "aws_subnet" "app_subnet_ash-dpl" {
   vpc_id = var.vpc_id
-  cidr_block = "172.31.132.0/24"
+  cidr_block = "10.0.16.0/24"
   availability_zone = "eu-west-1a"
 
   tags = {
@@ -81,7 +81,7 @@ resource "aws_route_table" "public-dpl" {
     vpc_id = var.vpc_id
 
     route {
-        cidr_block = "0.0.0.0/0"
+        cidr_block = "10.0.1.0/0"
         gateway_id = var.gateway_id_var
     }
 
@@ -91,9 +91,9 @@ resource "aws_route_table" "public-dpl" {
 }
 
 #Route Table Association
-resource "aws_route_table_association" "assoc-dpl" {
+resource "aws_route_table_association" "assoc" {
     subnet_id = aws_subnet.app_subnet_ash-dpl.id
-    route_table_id = var.gateway_id_var
+    route_table_id = aws_route_table.public-dpl.id
 }
 
 #Template File
@@ -126,7 +126,7 @@ resource "aws_instance" "app_instance_ash-dpl" {
 resource "aws_security_group" "aws_ash_security_group-dpl" {
   name          = "${var.name}-sg"
   vpc_id        = var.vpc_id
-  description   = "security group that allows port 80 from anywhere"
+  description   = "security group from my IP"
 
   ingress {
     description = "Allows port 80"

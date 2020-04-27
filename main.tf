@@ -29,8 +29,9 @@ resource "aws_internet_gateway" "igw" {
 
 module "app" {
     source = "./modules/app_tier"
-    vpc_id = var.vpc_id
+    vpc_id = aws_vpc.app_vpc_ash.id
     name = var.name
     ami_id = var.ami_id
-    gateway_id_var = var.gateway_id_var
+    gateway_id_var = aws_internet_gateway.igw.id
 }
+
