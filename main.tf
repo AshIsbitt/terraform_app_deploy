@@ -39,6 +39,6 @@ module "db" {
     source = "./modules/db_tier"
     vpc_id = aws_vpc.app_vpc_ash.id
     name = "${var.name}-DB"
-    ami_id = var.ami_id
+    ami_id_private = var.ami_id_private
     gateway_id_var = aws_internet_gateway.igw.id
 }

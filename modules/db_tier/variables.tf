@@ -6,7 +6,7 @@ variable "name" {
   description = "Name of instance"
 }
 
-variable "ami_id" {
+variable "ami_id_private" {
   description = "ID of the AMI"
 }
 

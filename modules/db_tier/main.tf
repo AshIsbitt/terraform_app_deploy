@@ -84,9 +84,33 @@ resource "aws_security_group" "aws_ash_security_group_private" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-
   tags          = {
     Name        = "${var.name}-tags"
   }
-  
+}
+
+resource "aws_route_table" "private_route" {
+  vpc_id = var.vpc_id
+
+  tags = {
+    Name = "${var.name}-private-rtb"
+  }
+}
+
+resource "aws_route_table_association" "assoc" {
+  subnet_id = aws_subnet.db_subnet_ash.id
+  route_table_id = aws_route_table.private_route.id
+}
+
+resource "aws_instance" "mongod" {
+  ami   = var.ami_id_private
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+  subnet_id = aws_subnet.db_subnet_ash.id
+  vpc_security_group_ids = [aws_security_group.aws_ash_security_group_private.id]
+  key_name = "ash-Eng54-"
+
+  tags = {
+    Name = "${var.name}-inst-private"
+  }
 }
