@@ -14,61 +14,74 @@ resource "aws_subnet" "app_subnet_ash-dpl" {
 # Create NACL
 resource "aws_network_acl" "public_nacl" {
   vpc_id = var.vpc_id
-  subnet_ids = []
+  subnet_ids = [aws_subnet.app_subnet_ash-dpl.id]
 
   tags = {
       Name = "${var.name}-public-nacl"
   }
 
-  ingress {
-    protocol        = "tcp"
-    rule_no         = 100
-    action          = "allow"
-    cidr_block      = "0.0.0.0/0"
-    from_port       = 80
-    to_port         = 80
-  }
-  ingress {
-    protocol        = "tcp"
-    rule_no         = 110
-    action          = "allow"
-    cidr_block      = "0.0.0.0/0"
-    from_port       = 3000
-    to_port         = 3000
-  }
-  ingress {
-    protocol        = "tcp"
-    rule_no         = 120
-    action          = "allow"
-    cidr_block      = "0.0.0.0/0"
-    from_port       = 443
-    to_port         = 443
-  }
-  ingress {
-    protocol        = "tcp"
-    rule_no         = 130
-    action          = "allow"
-    cidr_block      = "0.0.0.0/0"
-    from_port       = 1024
-    to_port         = 65535
-  }
-  ingress {
-    protocol        = "tcp"
-    rule_no         = 140
-    action          = "allow"
-    cidr_block      = "5.66.196.52/32"
-    from_port       = 22
-    to_port         = 22
-  }
   egress {
-    protocol        = "tcp"
-    rule_no         = 100
-    action          = "allow"
-    cidr_block      = "0.0.0.0/0"
-    from_port       = 0
-    to_port         = 0
+    protocol = -1
+    rule_no = 100
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 110
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 120
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 3000
+    to_port    = 3000
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 130
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 140
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 22
+    to_port    = 22
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 150
+    action     = "allow"
+    cidr_block = "10.0.19.0/24"
+    from_port  = 27017
+    to_port    = 27017
+  }
 }
 
 #Create Route Table
@@ -133,14 +146,6 @@ resource "aws_security_group" "aws_ash_security_group-dpl" {
   }
 
   ingress {
-    description = "Allows access on port 8080"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
     description = "Allows access on port 443"
     from_port   = 443
     to_port     = 443
@@ -161,13 +166,20 @@ resource "aws_security_group" "aws_ash_security_group-dpl" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["5.66.192.52/32"]
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 1024
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "tcp"
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 

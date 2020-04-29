@@ -12,54 +12,46 @@ resource "aws_subnet" "db_subnet_ash" {
 # Create NACL
 resource "aws_network_acl" "private_nacl" {
   vpc_id = var.vpc_id
+  subnet_ids = [aws_subnet.db_subnet_ash.id]
 
   tags = {
       Name = "${var.name}-private-nacl"
   }
 
   egress {
-    protocol   = "tcp"
-    rule_no    = 200
+    protocol   = -1
+    rule_no    = 100
     action     = "allow"
-    cidr_block = "10.0.16.0/24"
-    from_port  = 1024
-    to_port    = 65535
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 210
-    action     = "allow"
-    cidr_block = "10.0.16.0/24"
+    cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
   }
 
   ingress {
     protocol   = "tcp"
-    rule_no    = 100
+    rule_no    = 130
     action     = "allow"
     cidr_block = "10.0.16.0/24"
-    from_port  = 27017
-    to_port    = 27017
+    from_port  = 1024
+    to_port    = 65535
   }
 
   ingress {
     protocol   = "tcp"
-    rule_no    = 110
+    rule_no    = 140
     action     = "allow"
     cidr_block = "10.0.16.0/24"
     from_port  = 22
     to_port    = 22
   }
 
-    ingress {
+  ingress {
     protocol   = "tcp"
-    rule_no    = 120
+    rule_no    = 150
     action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 1024
-    to_port    = 65535
+    cidr_block = "10.0.16.0/24"
+    from_port  = 27017
+    to_port    = 27017
   }
 }
 
@@ -67,27 +59,34 @@ resource "aws_network_acl" "private_nacl" {
 resource "aws_security_group" "aws_ash_security_group_private" {
   name          = "${var.name}-sg"
   vpc_id        = var.vpc_id
-  description   = "security group "
+  description   = "security group"
+
+  ingress {
+    description = "Allows access on my IP port 22"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.16.0/24"]
+      }
+
+  ingress {
+    from_port   = 1024
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.16.0/24"]
+  }
 
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "allows port 27017"
-    from_port   = 27017
-    to_port     = 27017
-    protocol    = "tcp"
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags          = {
     Name        = "${var.name}-tags"
   }
-}
+} 
 
 resource "aws_route_table" "private_route" {
   vpc_id = var.vpc_id
