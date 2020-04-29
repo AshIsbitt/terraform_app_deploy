@@ -7,10 +7,9 @@ variable "name" {
 }
 
 variable "ami_id" {
-  default = "ami-005412cbe6cb77ca6"
+  default = "ami-034759afb037c39fa"
 }
 
-
 variable "ami_id_private" {
-  default = "ami-0702bc285da1024e7"
+  default = "ami-0150387315fd04c7e"
 }

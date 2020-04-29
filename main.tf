@@ -33,6 +33,7 @@ module "app" {
     name = "${var.name}-App"
     ami_id = var.ami_id
     gateway_id_var = aws_internet_gateway.igw.id
+    db_ip = module.db.instance_ip_addr
 }
 
 module "db" {

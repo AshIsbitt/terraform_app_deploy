@@ -14,3 +14,6 @@ variable "gateway_id_var" {
 
 }
 
+variable "db_ip" {
+
+}

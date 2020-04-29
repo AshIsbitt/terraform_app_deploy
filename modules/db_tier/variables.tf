@@ -13,4 +13,3 @@ variable "ami_id_private" {
 variable "gateway_id_var" {
 
 }
-
